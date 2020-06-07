@@ -6,10 +6,31 @@ import (
 	"testing"
 )
 
+func fillIntQueue(pq *PriorityQueue) int {
+	priorities := map[int]int{
+		1:  1,
+		2:  10,
+		3:  5,
+		4:  3,
+		5:  7,
+		6:  6,
+		7:  7,
+		10: 9,
+		21: 20,
+		19: 22,
+		17: 12,
+	}
+	for i, priority := range priorities {
+		pq.Push(i, priority)
+	}
+
+	return len(priorities)
+}
+
 func TestPush(t *testing.T) {
-	t.Parallel()
 	minQueue := New(MinQueue)
 	maxQueue := New(MaxQueue)
+
 	if minQueue.Len() != 0 {
 		t.Error("Length of empty minQueue should be 0")
 	}
@@ -18,19 +39,41 @@ func TestPush(t *testing.T) {
 		t.Error("Length of empty maxQueue should be 0")
 	}
 
-	priorities := [10]int{1, 10, 5, 3, 7, 9, 20, 22, 17, 12}
-	for i, priority := range priorities {
-		minQueue.Push(i, priority)
-		maxQueue.Push(i, priority)
+	minSize := fillIntQueue(minQueue)
+	maxSize := fillIntQueue(maxQueue)
+
+	if minQueue.Len() != minSize {
+		t.Error("Length of minQueue should be" + strconv.Itoa(minSize) + ", but it is " + strconv.Itoa(minQueue.Len()))
 	}
 
-	if minQueue.Len() != 10 {
-		t.Error("Length of inQueue should be 10, but it is " + strconv.Itoa(minQueue.Len()))
+	if maxQueue.Len() != maxSize {
+		t.Error("Length of maxQueue should be" + strconv.Itoa(maxSize) + ", but it is " + strconv.Itoa(maxQueue.Len()))
 	}
+}
+
+func TestPop(t *testing.T) {
+	minQueue := New(MinQueue)
+	maxQueue := New(MaxQueue)
+
+	_, _, err := minQueue.Pop()
+	if err == nil {
+		t.Error("Pop from an empty queue should be an error")
+	}
+
+	_, _, err = maxQueue.Pop()
+	if err == nil {
+		t.Error("Pop from an empty queue should be an error")
+	}
+
+	fillIntQueue(minQueue)
+	fillIntQueue(maxQueue)
 
 	var maxResult []int
 	for maxQueue.Len() > 0 {
-		_, prt, _ := maxQueue.Pop()
+		_, prt, err := maxQueue.Pop()
+		if err != nil {
+			t.Error("Pop should not have returned an error")
+		}
 		maxResult = append(maxResult, prt)
 	}
 	res := sort.SliceIsSorted(maxResult, func(i, j int) bool {
