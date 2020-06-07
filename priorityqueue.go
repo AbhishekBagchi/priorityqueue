@@ -55,6 +55,11 @@ func (pq *pq_internal) Push(x interface{}) {
 	pq.queue = append(pq.queue, element)
 }
 
+func (pq *pq_internal) Top() Element {
+	element := pq.queue[0]
+	return *element
+}
+
 func (pq *pq_internal) Pop() interface{} {
 	size := len(pq.queue)
 	element := pq.queue[size-1]
@@ -76,5 +81,13 @@ func (pq *PriorityQueue) Pop() (interface{}, int, error) {
 		return nil, 0, errors.New("No elements to pop")
 	}
 	element := *(heap.Pop(&pq.queue).(*Element))
+	return element.value, element.priority, nil
+}
+
+func (pq *PriorityQueue) Top() (interface{}, int, error) {
+	if pq.Len() == 0 {
+		return nil, 0, errors.New("No elements to pop")
+	}
+	element := pq.queue.Top()
 	return element.value, element.priority, nil
 }

@@ -98,3 +98,49 @@ func TestPop(t *testing.T) {
 		t.Error("The elements in minQueue should be sorted")
 	}
 }
+
+func TestTop(t *testing.T) {
+	minQueue := New(MinQueue)
+	maxQueue := New(MaxQueue)
+
+	_, _, err := minQueue.Top()
+	if err == nil {
+		t.Error("Top from an empty queue should be an error")
+	}
+
+	_, _, err = maxQueue.Top()
+	if err == nil {
+		t.Error("Top from an empty queue should be an error")
+	}
+
+	fillIntQueue(minQueue)
+	fillIntQueue(maxQueue)
+
+	top_elem, top_prt, err := minQueue.Top()
+	if err != nil {
+		t.Error("err should be nil on call to Top")
+	}
+
+	elem, prt, err := minQueue.Pop()
+	if err != nil {
+		t.Error("err should be nil on call to Top")
+	}
+	if elem != top_elem || top_prt != prt {
+		t.Logf("%v, %v, %v, %v", top_elem, top_prt, elem, prt)
+		t.Error("Elements returned by Top and Pop are not the same")
+	}
+
+	top_elem, top_prt, err = maxQueue.Top()
+	if err != nil {
+		t.Error("err should be nil on call to Top")
+	}
+
+	elem, prt, err = maxQueue.Pop()
+	if err != nil {
+		t.Error("err should be nil on call to Top")
+	}
+	if elem != top_elem || top_prt != prt {
+		t.Logf("%v, %v, %v, %v", top_elem, top_prt, elem, prt)
+		t.Error("Elements returned by Top and Pop are not the same")
+	}
+}
